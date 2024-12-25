@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 Goals</title>
+    <style>
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #252525;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --accent: #646cff;
+            --accent-soft: rgba(100, 108, 255, 0.08);
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 3rem;
+            color: var(--text-primary);
+            padding: 1rem 0;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+        }
+
+        .person-section {
+            background-color: var(--bg-secondary);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .person-name {
+            font-size: 2.25rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .year-aim {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            border-left: 3px solid var(--accent);
+            padding-left: 1rem;
+            background-color: var(--accent-soft);
+            padding: 1rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+
+        .goals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .goal-card {
+            background-color: var(--bg-primary);
+            border-radius: 0.75rem;
+            padding: 1.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .goal-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--card-shadow);
+            border-color: var(--accent);
+        }
+
+        .goal-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .goal-title::after {
+            content: '+';
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+            opacity: 0.7;
+        }
+
+        .expanded .goal-title::after {
+            transform: rotate(45deg);
+        }
+
+        .goal-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .goal-steps {
+            list-style: none;
+            display: none;
+            transform: translateY(-10px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .goal-steps li {
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-primary);
+        }
+
+        .goal-steps li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+
+        .expanded .goal-steps {
+            display: block;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2.25rem;
+            }
+
+            .goals-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .person-section {
+                padding: 1.5rem;
+            }
+
+            .person-name {
+                font-size: 2rem;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .person-section {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .person-section:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .goal-card {
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        .goals-grid > *:nth-child(n) {
+            animation-delay: calc(0.1s * var(--i));
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>2025 Goals</h1>
+        <div id="goals-content"></div>
+    </div>
+
+    <script>
+        const goalsData = {
+            me: {
+                name: "Me",
+                aim: "To feel confident and learn to manage time",
+                goals: [
+                    {
+                        title: "Better Health",
+                        description: "Lose weight while gaining muscle",
+                        steps: [
+                            "Protein-centered diet",
+                            "Workout/gym consistently",
+                            "Improve BMI (target: weight down to 75kg)",
+                            "Build muscles (arms, thighs, and chest)",
+                            "Fix sleep schedule"
+                        ]
+                    },
+                    {
+                        title: "Learn Guitar",
+                        description: "Get better at playing the guitar",
+                        steps: [
+                            "Learn popular chords",
+                            "Learn to play songs",
+                            "Improve barre chords",
+                            "Record covers and originals",
+                            "Practice daily",
+                            "Learn to make good tones"
+                        ]
+                    },
+                    {
+                        title: "Skill Up",
+                        description: "Learn internship-relevant skills and build a strong GitHub portfolio",
+                        steps: [
+                            "Complete front-end web development projects",
+                            "Learn back-end programming and deploy a website",
+                            "Practice DSA daily",
+                            "Master OS, DBMS, and OOP by 4th semester",
+                            "Explore programming areas like app development"
+                        ]
+                    },
+                    {
+                        title: "Cooking",
+                        description: "Learn to cook during the summer vacation",
+                        steps: [
+                            "Master basic breakfast and lunch recipes",
+                            "Learn to make pasta",
+                            "Practice cooking regularly",
+                            "Buy better cookware"
+                        ]
+                    },
+                    {
+                        title: "Academics",
+                        description: "Get better at learning and secure better grades",
+                        steps: [
+                            "Target a 9.5 CGPA for 4th semester",
+                            "Complete lab assignments on the same day",
+                            "Stay ahead in all subjects except ED",
+                            "Maintain consistent study hours"
+                        ]
+                    },
+                    {
+                        title: "Networking",
+                        description: "Connect with seniors and industry professionals",
+                        steps: []
+                    },
+                    {
+                        title: "Fashion Sense",
+                        description: "Build a style that reflects personality",
+                        steps: [
+                            "4-5 college-ready outfits",
+                            "4-5 outfits for special occasions",
+                            "2-3 pairs of quality shoes"
+                        ]
+                    },
+                    {
+                        title: "Smell Good",
+                        description: "Avoid body odor despite sweating",
+                        steps: [
+                            "Try new perfumes",
+                            "Carry a pocket deodorant",
+                            "Bathe daily and wash hair twice a week",
+                            "Maintain good grooming habits"
+                        ]
+                    }
+                ]
+            },
+            tanya: {
+                name: "Tanya",
+                aim: "New experiences",
+                goals: [
+                    {
+                        title: "Better Health",
+                        description: "Build endurance and achieve optimal health parameters",
+                        steps: [
+                            "Balanced diet",
+                            "Address vitamin D, B12, and iron deficiencies",
+                            "Build endurance",
+                            "Improve BMI (target: weight up to 50kg)",
+                            "Cure gastroenteritis"
+                        ]
+                    },
+                    {
+                        title: "Learn Piano",
+                        description: "Start learning the piano",
+                        steps: [
+                            "Buy or borrow a keyboard",
+                            "Learn simple chords",
+                            "Practice melodies with the left hand",
+                            "Play with both hands",
+                            "Develop hand independence",
+                            "Practice daily"
+                        ]
+                    },
+                    {
+                        title: "Skill Up",
+                        description: "Acquire career-relevant skills",
+                        steps: [
+                            "Placeholder 1",
+                            "Placeholder 2",
+                            "Placeholder 3",
+                            "Placeholder 4",
+                            "Placeholder 5"
+                        ]
+                    },
+                    {
+                        title: "Cooking",
+                        description: "Get better at cooking and learn new recipes",
+                        steps: [
+                            "Learn to cook from scratch",
+                            "Basic baking skills",
+                            "Cook at least one meal daily",
+                            "Budget for oven: ₹10k"
+                        ]
+                    },
+                    {
+                        title: "Better Food Choices",
+                        description: "Make mindful food and medicine choices",
+                        steps: [
+                            "Buy unprocessed foods",
+                            "Make informed decisions on packaged items",
+                            "Research medicines before consumption",
+                            "Grow some of my own food"
+                        ]
+                    },
+                    {
+                        title: "Attend More Events",
+                        description: "Participate in events to network and build connections",
+                        steps: []
+                    },
+                    {
+                        title: "Have Fun",
+                        description: "Enjoy new experiences",
+                        steps: [
+                            "Go on more solo dates",
+                            "Explore new places, foods, and activities"
+                        ]
+                    },
+                    {
+                        title: "Appearance",
+                        description: "Enhance my look and feel better",
+                        steps: [
+                            "Upgrade wardrobe",
+                            "Improve hair care",
+                            "Learn basic makeup for occasions",
+                            "Buy a new clothes drawer"
+                        ]
+                    }
+                ]
+            }
+        };
+
+        function createGoalsSection(person) {
+            const section = document.createElement('div');
+            section.className = 'person-section';
+            
+            const goalsHtml = person.goals.map((goal, index) => `
+                <div class="goal-card" style="--i: ${index + 1}">
+                    <h3 class="goal-title">${goal.title}</h3>
+                    <p class="goal-description">${goal.description}</p>
+                    ${goal.steps.length ? `
+                        <ul class="goal-steps">
+                            ${goal.steps.map(step => `<li>${step}</li>`).join('')}
+                        </ul>
+                    ` : ''}
+                </div>
+            `).join('');
+
+            section.innerHTML = `
+                <h2 class="person-name">${person.name}</h2>
+                <p class="year-aim">${person.aim}</p>
+                <div class="goals-grid">
+                    ${goalsHtml}
+                </div>
+            `;
+
+            return section;
+        }
+
+        function initializeGoals() {
+            const container = document.getElementById('goals-content');
+            container.appendChild(createGoalsSection(goalsData.me));
+            container.appendChild(createGoalsSection(goalsData.tanya));
+
+            document.querySelectorAll('.goal-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    card.classList.toggle('expanded');
+                });
+            });
+        }
+
+        initializeGoals();
+    </script>
+</body>
+</html>
